@@ -1,0 +1,23 @@
+# If you want electrum to appear in a linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install electrum.desktop
+
+[Desktop Entry]
+Comment=Lightweight VIPSTARCOIN Client
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; run_electrum %u"
+GenericName[en_US]=VIPSTARCOIN Wallet
+GenericName=VIPSTARCOIN Wallet
+Icon=electrum
+Name[en_US]=Electrum VIPSTARCOIN Wallet
+Name=Electrum VIPSTARCOIN Wallet
+Categories=Finance;Network;
+StartupNotify=false
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/vipstarcoin;
+Actions=Testnet;
+
+[Desktop Action Testnet]
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; run_electrum --testnet %u"
+Name=Testnet mode
+
+

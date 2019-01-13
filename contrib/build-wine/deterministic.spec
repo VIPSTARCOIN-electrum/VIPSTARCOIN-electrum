@@ -11,7 +11,7 @@ else:
     raise Exception('no name')
 
 
-home = 'C:\\qtum-electrum\\'
+home = 'C:\\electrum\\'
 
 # see https://github.com/pyinstaller/pyinstaller/issues/2005
 hiddenimports = []
@@ -28,10 +28,10 @@ binaries += [('C:/tmp/libsecp256k1.dll', '.')]
 binaries += [b for b in collect_dynamic_libs('PyQt5') if 'qwindowsvista' in b[0]]
 
 datas = [
-    (home+'qtum_electrum/*.json', 'qtum_electrum'),
-    (home+'qtum_electrum/wordlist/english.txt', 'qtum_electrum/wordlist'),
-    (home+'qtum_electrum/locale', 'qtum_electrum/locale'),
-    (home+'qtum_electrum/plugins', 'qtum_electrum/plugins'),
+    (home+'electrum/*.json', 'electrum'),
+    (home+'electrum/wordlist/english.txt', 'electrum/wordlist'),
+    (home+'electrum/locale', 'electrum/locale'),
+    (home+'electrum/plugins', 'electrum/plugins'),
     ('C:\\Program Files (x86)\\ZBar\\bin\\', '.')
 ]
 datas += collect_data_files('trezorlib')
@@ -39,19 +39,19 @@ datas += collect_data_files('btchip')
 datas += collect_data_files('keepkeylib')
 
 # We don't put these files in to actually include them in the script but to make the Analysis method scan them for imports
-a = Analysis([home+'run_qtum_electrum',
-              home+'qtum_electrum/gui/qt/main_window.py',
-              home+'qtum_electrum/gui/text.py',
-              home+'qtum_electrum/util.py',
-              home+'qtum_electrum/wallet.py',
-              home+'qtum_electrum/simple_config.py',
-              home+'qtum_electrum/qtum.py',
-              home+'qtum_electrum/dnssec.py',
-              home+'qtum_electrum/commands.py',
-              home+'qtum_electrum/plugins/email_requests/qt.py',
-              home+'qtum_electrum/plugins/trezor/client.py',
-              home+'qtum_electrum/plugins/trezor/qt.py',
-              home+'qtum_electrum/plugins/ledger/qt.py',
+a = Analysis([home+'run_electrum',
+              home+'electrum/gui/qt/main_window.py',
+              home+'electrum/gui/text.py',
+              home+'electrum/util.py',
+              home+'electrum/wallet.py',
+              home+'electrum/simple_config.py',
+              home+'electrum/vipstarcoin.py',
+              home+'electrum/dnssec.py',
+              home+'electrum/commands.py',
+              home+'electrum/plugins/email_requests/qt.py',
+              home+'electrum/plugins/trezor/client.py',
+              home+'electrum/plugins/trezor/qt.py',
+              home+'electrum/plugins/ledger/qt.py',
               ],
              binaries=binaries,
              datas=datas,

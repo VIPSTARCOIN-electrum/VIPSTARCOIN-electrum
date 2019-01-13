@@ -1,0 +1,50 @@
+{
+  "s1.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s2.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s3.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s4.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s5.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s7.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s8.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  },
+  "s9.vipstarcoin.info": {
+    "pruning": "-",
+    "t": "50001",
+    "s": "50002",
+    "version": "1.1"
+  }
+}

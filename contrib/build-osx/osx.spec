@@ -4,10 +4,10 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, coll
 import sys
 import os
 
-PACKAGE='Qtum Electrum'
-PYPKG='qtum_electrum'
-MAIN_SCRIPT='run_qtum_electrum'
-ICONS_FILE='qtum-electrum.icns'
+PACKAGE='VIPSTARCOIN Electrum'
+PYPKG='electrum'
+MAIN_SCRIPT='run_electrum'
+ICONS_FILE='electrum.icns'
 
 for i, x in enumerate(sys.argv):
     if x == '--name':
@@ -27,10 +27,10 @@ hiddenimports += collect_submodules('keepkeylib')
 hiddenimports += collect_submodules('websocket')
 
 datas = [
-    (electrum+'qtum_electrum/*.json', PYPKG),
-    (electrum+'qtum_electrum/wordlist/english.txt', PYPKG + '/wordlist'),
-    (electrum+'qtum_electrum/locale', PYPKG + '/locale'),
-    (electrum+'qtum_electrum/plugins', PYPKG + '/plugins'),
+    (electrum+'electrum/*.json', PYPKG),
+    (electrum+'electrum/wordlist/english.txt', PYPKG + '/wordlist'),
+    (electrum+'electrum/locale', PYPKG + '/locale'),
+    (electrum+'electrum/plugins', PYPKG + '/plugins'),
 ]
 
 datas += collect_data_files('trezorlib')
@@ -46,18 +46,18 @@ binaries += [b for b in collect_dynamic_libs('PyQt5') if 'macstyle' in b[0]]
 
 # We don't put these files in to actually include them in the script but to make the Analysis method scan them for imports
 a = Analysis([electrum+MAIN_SCRIPT,
-              electrum+'qtum_electrum/gui/qt/main_window.py',
-              electrum+'qtum_electrum/gui/text.py',
-              electrum+'qtum_electrum/util.py',
-              electrum+'qtum_electrum/wallet.py',
-              electrum+'qtum_electrum/simple_config.py',
-              electrum+'qtum_electrum/qtum.py',
-              electrum+'qtum_electrum/dnssec.py',
-              electrum+'qtum_electrum/commands.py',
-              electrum+'qtum_electrum/plugins/email_requests/qt.py',
-              electrum+'qtum_electrum/plugins/trezor/client.py',
-              electrum+'qtum_electrum/plugins/trezor/qt.py',
-              electrum+'qtum_electrum/plugins/ledger/qt.py',
+              electrum+'electrum/gui/qt/main_window.py',
+              electrum+'electrum/gui/text.py',
+              electrum+'electrum/util.py',
+              electrum+'electrum/wallet.py',
+              electrum+'electrum/simple_config.py',
+              electrum+'electrum/vipstarcoin.py',
+              electrum+'electrum/dnssec.py',
+              electrum+'electrum/commands.py',
+              electrum+'electrum/plugins/email_requests/qt.py',
+              electrum+'electrum/plugins/trezor/client.py',
+              electrum+'electrum/plugins/trezor/qt.py',
+              electrum+'electrum/plugins/ledger/qt.py',
               ],
              binaries=binaries,
              datas=datas,

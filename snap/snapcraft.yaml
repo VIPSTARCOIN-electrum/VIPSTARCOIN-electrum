@@ -1,8 +1,8 @@
 name: electrum
 version: master
-summary: Qtum thin client
+summary: VIPSTARCOIN thin client
 description: |
-  Lightweight Qtum client
+  Lightweight VIPSTARCOIN client
 
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict

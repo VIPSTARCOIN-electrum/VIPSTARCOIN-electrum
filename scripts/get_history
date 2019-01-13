@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
 import sys
-from qtum_electrum import Network
-from qtum_electrum.util import json_encode, print_msg
-from qtum_electrum import qtum
+from electrum import Network
+from electrum.util import json_encode, print_msg
+from electrum import vipstarcoin
 
 try:
     addr = sys.argv[1]
 except Exception:
-    print("usage: get_history <qtum_address>")
+    print("usage: get_history <vipstarcoin_address>")
     sys.exit(1)
 
 n = Network()
 n.start()
-_hash = qtum.address_to_scripthash(addr)
+_hash = vipstarcoin.address_to_scripthash(addr)
 h = n.synchronous_get(('blockchain.scripthash.get_history', [_hash]))
 print_msg(json_encode(h))

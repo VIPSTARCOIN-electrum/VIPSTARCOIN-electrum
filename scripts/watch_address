@@ -2,17 +2,17 @@
 
 import sys
 import time
-from qtum_electrum import SimpleConfig, Network
-from qtum_electrum.util import print_msg, json_encode
-from qtum_electrum import qtum
+from electrum import SimpleConfig, Network
+from electrum.util import print_msg, json_encode
+from electrum import vipstarcoin
 
 try:
     addr = sys.argv[1]
 except Exception:
-    print("usage: watch_address <qtum_address>")
+    print("usage: watch_address <vipstarcoin_address>")
     sys.exit(1)
 
-sh = qtum.address_to_scripthash(addr)
+sh = vipstarcoin.address_to_scripthash(addr)
 
 # start network
 c = SimpleConfig()

@@ -2,7 +2,7 @@
 import os
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-os.chdir('../qtum_electrum')
+os.chdir('../electrum')
 locale_file_name = 'locale/messages.pot'
 
 # Convert .po to .mo

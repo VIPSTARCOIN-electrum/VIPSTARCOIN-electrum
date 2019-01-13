@@ -1,36 +1,36 @@
-Qtum Electrum
+VIPSTARCOIN Electrum
 =====================================
 
   Licence: MIT Licence
 
-  Qtum Electrum is a lightweight Qtum wallet forked from [Electrum](https://github.com/spesmilo/electrum)
+  VIPSTARCOIN Electrum is a lightweight VIPSTARCOIN wallet forked from [Electrum](https://github.com/spesmilo/electrum)
 
 
 Getting started
 ===============
 
-For Windows and Mac OS X users, you can download latest release [here](https://github.com/qtumproject/qtum-electrum/releases).
+For Windows and Mac OS X users, you can download latest release [here](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/releases).
 
 
 If you are using Linux, read the "Development Version" section.
 
 
-Compatible with Qtum mobile wallet
+Compatible with VIPSTARCOIN mobile wallet
 ==================================
 
-Qtum Electrum standard wallet uses [bip44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) derivation path with coin_type set to 88 which not compatible with the current qtum mobile wallet.
+VIPSTARCOIN Electrum standard wallet uses [bip44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) derivation path with coin_type set to 88 which not compatible with the current vipstarcoin mobile wallet.
 
-If you want to be compatible with the qtum mobile wallet, you need to choose "Qtum mobile wallet compatible" to create or restore your wallet.
+If you want to be compatible with the vipstarcoin mobile wallet, you need to choose "VIPSTARCOIN mobile wallet compatible" to create or restore your wallet.
 
-![](https://github.com/qtumproject/qtum-electrum/blob/master/snap/mobile_compatible.png)
+![](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/snap/mobile_compatible.png)
 
 
-Compatible with Qtum Qt Core wallet
+Compatible with VIPSTARCOIN Qt Core wallet
 ==================================
 
-If you want to import private master key from [Qtum Qt Core wallet](https://github.com/qtumproject/qtum/releases/), you need to choose "Qtum Qt Core wallet compatible" to restore your wallet.
+If you want to import private master key from [VIPSTARCOIN Qt Core wallet](https://github.com/VIPSTARCOIN/VIPSTARCOIN/releases/), you need to choose "VIPSTARCOIN Qt Core wallet compatible" to restore your wallet.
 
-![](https://github.com/qtumproject/qtum-electrum/blob/master/snap/qt_core_compatible.png)
+![](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/snap/qt_core_compatible.png)
 
 
 Development version
@@ -38,8 +38,8 @@ Development version
 
 Check out the code from Github:
 
-    git clone https://github.com/qtumproject/qtum-electrum.git
-    cd qtum-electrum
+    git clone https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum.git
+    cd electrum
 
 Install dependencies::
 
@@ -54,12 +54,12 @@ Install dependencies::
 Compile the icons file for Qt:
 
     sudo apt-get install pyqt5-dev-tools
-    pyrcc5 icons.qrc -o qtum_electrum/gui/qt/icons_rc.py
+    pyrcc5 icons.qrc -o electrum/gui/qt/icons_rc.py
 
 Compile the protobuf description file:
 
     sudo apt-get install protobuf-compiler
-    protoc --proto_path=qtum_electrum --python_out=qtum_electrum qtum_electrum/paymentrequest.proto
+    protoc --proto_path=electrum --python_out=electrum electrum/paymentrequest.proto
 
 Create translations (optional):
 
@@ -73,7 +73,7 @@ Create translations (optional):
 
 Run it:
 
-    ./run_qtum_electrum
+    ./run_electrum
 
 
 
@@ -90,17 +90,17 @@ This directory contains the python dependencies used by Electrum.
 Mac OS X
 --------
 
-See [contrib/build-osx/README.md](https://github.com/qtumproject/qtum-electrum/blob/master/contrib/build-osx/README.md) file.
+See [contrib/build-osx/README.md](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/contrib/build-osx/README.md) file.
 
 Windows
 -------
 
-See [contrib/build-wine/README.md](https://github.com/qtumproject/qtum-electrum/blob/master/contrib/build-wine/README.md) file.
+See [contrib/build-wine/README.md](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/contrib/build-wine/README.md) file.
 
 
 Android
 -------
 
-See [gui/kivy/Readme.md](https://github.com/qtumproject/qtum-electrum/blob/master/gui/kivy/Readme.md) file.
+See [gui/kivy/Readme.md](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/gui/kivy/Readme.md) file.
 
 

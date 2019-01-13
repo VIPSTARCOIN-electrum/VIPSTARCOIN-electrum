@@ -1,7 +1,7 @@
-import select, time, qtum_electrum, queue
-from qtum_electrum import Connection, Interface, SimpleConfig
+import select, time, electrum, queue
+from electrum import Connection, Interface, SimpleConfig
 
-from qtum_electrum.network import filter_protocol, parse_servers
+from electrum.network import filter_protocol, parse_servers
 from collections import defaultdict
 
 # electrum.util.set_verbosity(1)

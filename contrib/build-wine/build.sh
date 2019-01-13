@@ -13,8 +13,8 @@ echo "Clearing $here/build and $here/dist..."
 rm "$here"/build/* -rf
 rm "$here"/dist/* -rf
 
-mkdir -p /tmp/qtum-electrum-build/pip-cache
-export PIP_CACHE_DIR="/tmp/qtum-electrum-build/pip-cache"
+mkdir -p /tmp/electrum-build/pip-cache
+export PIP_CACHE_DIR="/tmp/electrum-build/pip-cache"
 
 $here/prepare-eth-abi.sh || exit 1
 

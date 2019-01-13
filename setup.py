@@ -16,7 +16,7 @@ with open('./requirements.txt') as f:
 requirements += ['eth-hash', 'eth-utils', 'eth-abi']
 
 # load version.py; needlessly complicated alternative to "imp.load_source":
-version_spec = importlib.util.spec_from_file_location('version', 'qtum_electrum/version.py')
+version_spec = importlib.util.spec_from_file_location('version', 'electrum/version.py')
 version_module = version = importlib.util.module_from_spec(version_spec)
 version_spec.loader.exec_module(version_module)
 
@@ -39,12 +39,12 @@ if platform.system() in ['Linux', 'FreeBSD', 'DragonFly']:
         else:
             usr_share = os.path.expanduser('~/.local/share')
     data_files += [
-        (os.path.join(usr_share, 'applications/'), ['qtum-electrum.desktop']),
+        (os.path.join(usr_share, 'applications/'), ['electrum.desktop']),
         (os.path.join(usr_share, icons_dirname), ['icons/electrum.png'])
     ]
 
 setup(
-    name="Qtum Electrum",
+    name="VIPSTARCOIN Electrum",
     version=version.ELECTRUM_VERSION,
     install_requires=requirements,
     extras_require={
@@ -57,27 +57,27 @@ setup(
         'https://github.com/icodeface/eth-abi',
     ],
     packages=[
-        'qtum_electrum',
-        'qtum_electrum.gui',
-        'qtum_electrum.gui.qt',
-        'qtum_electrum.plugins',
-    ] + [('qtum_electrum.plugins.'+pkg) for pkg in find_packages('qtum_electrum/plugins')],
+        'electrum',
+        'electrum.gui',
+        'electrum.gui.qt',
+        'electrum.plugins',
+    ] + [('electrum.plugins.'+pkg) for pkg in find_packages('electrum/plugins')],
     package_dir={
-        'qtum_electrum': 'qtum_electrum',
+        'electrum': 'electrum',
     },
     package_data={
         '': ['*.txt', '*.json', '*.ttf', '*.otf'],
-        'qtum_electrum': [
+        'electrum': [
             'wordlist/*.txt',
             'locale/*/LC_MESSAGES/electrum.mo',
         ]
     },
-    scripts=['run_qtum_electrum'],
+    scripts=['run_electrum'],
     data_files=data_files,
-    description="Lightweight Qtum Wallet",
+    description="Lightweight VIPSTARCOIN Wallet",
     author="CodeFace",
-    author_email="codeface@qtum.org",
+    author_email="yuto_tetuota@yahoo.co.jp",
     license="MIT Licence",
-    url="https://qtum.org",
-    long_description="""Lightweight Qtum Wallet"""
+    url="https://vipstarcoin.jp",
+    long_description="""Lightweight VIPSTARCOIN Wallet"""
 )

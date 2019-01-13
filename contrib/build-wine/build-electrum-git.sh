@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # You probably need to update only this link
-ELECTRUM_GIT_URL=https://github.com/qtumproject/qtum-electrum.git
+ELECTRUM_GIT_URL=https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum.git
 BRANCH=master
-NAME_ROOT=Qtum-electrum
+NAME_ROOT=VIPSTARCOIN-electrum
 PYTHON_VERSION=3.6.6
 
 # These settings probably don't need any change
@@ -21,20 +21,20 @@ set -e
 mkdir -p tmp
 cd tmp
 
-if [ -d "qtum-electrum-git" ]; then
+if [ -d "electrum-git" ]; then
     # GIT repository found, update it
     echo "Pull"
-    cd qtum-electrum-git
+    cd electrum-git
     git pull
     git checkout $BRANCH
     cd ..
 else
     # GIT repository not found, clone it
     echo "Clone"
-    git clone -b $BRANCH $ELECTRUM_GIT_URL qtum-electrum-git
+    git clone -b $BRANCH $ELECTRUM_GIT_URL electrum-git
 fi
 
-pushd qtum-electrum-git
+pushd electrum-git
 if [ ! -z "$1" ]; then
     git checkout $1
 fi
@@ -44,20 +44,20 @@ echo "Last commit: $VERSION"
 find -exec touch -d '2000-11-11T11:11:11+00:00' {} +
 popd
 
-rm -rf $WINEPREFIX/drive_c/qtum-electrum
-cp -r qtum-electrum-git $WINEPREFIX/drive_c/qtum-electrum
-cp qtum-electrum-git/LICENCE .
+rm -rf $WINEPREFIX/drive_c/electrum
+cp -r electrum-git $WINEPREFIX/drive_c/electrum
+cp electrum-git/LICENCE .
 
 # add locale dir
-cp -r ../../../qtum_electrum/locale $WINEPREFIX/drive_c/qtum-electrum/qtum_electrum/
+cp -r ../../../electrum/locale $WINEPREFIX/drive_c/electrum/electrum/
 
 # Install frozen dependencies
 $PYTHON -m pip install -r ../../../requirements.txt
 
 # Build Qt resources
-wine $WINEPREFIX/drive_c/python$PYTHON_VERSION/Scripts/pyrcc5.exe C:/qtum-electrum/icons.qrc -o C:/qtum-electrum/qtum_electrum/gui/qt/icons_rc.py
+wine $WINEPREFIX/drive_c/python$PYTHON_VERSION/Scripts/pyrcc5.exe C:/electrum/icons.qrc -o C:/electrum/electrum/gui/qt/icons_rc.py
 
-pushd $WINEPREFIX/drive_c/qtum-electrum
+pushd $WINEPREFIX/drive_c/electrum
 $PYTHON setup.py install
 popd
 
@@ -82,4 +82,4 @@ mv electrum-setup.exe $NAME_ROOT-win-$VERSION-setup.exe
 cd ..
 
 echo "Done."
-sha256sum dist/Qtum-electrum*exe
+sha256sum dist/VIPSTARCOIN-electrum*exe

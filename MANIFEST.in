@@ -1,12 +1,12 @@
 include LICENCE RELEASE-NOTES AUTHORS
 include README.md
-include qtum-electrum.desktop
+include electrum.desktop
 include *.py
-include run_qtum_electrum
+include run_electrum
 include requirements.txt
 include requirements-fixed.txt
 include requirements-binaries.txt
-recursive-include qtum_electrum *.py
+recursive-include electrum *.py
 recursive-include packages *.py
 recursive-include packages cacert.pem
 include icons.qrc
