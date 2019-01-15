@@ -412,10 +412,6 @@ class Blockchain(util.PrintError):
         return hash_header(self.read_header(height))
 
     def get_target(self, height, prev_header=None, pprev_header=None):
-        if height <= POW_BLOCK_COUNT:
-            return compact_from_uint256(POW_LIMIT), POW_LIMIT
-        if height <= POW_BLOCK_COUNT + 2:
-            return compact_from_uint256(POS_LIMIT), POS_LIMIT
 
         if not prev_header:
             prev_header = self.read_header(height - 1)

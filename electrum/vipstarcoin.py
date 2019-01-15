@@ -23,17 +23,15 @@ POW_BLOCK_COUNT = 5000
 CHUNK_SIZE = 1024
 POW_LIMIT = 0x0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 POS_LIMIT = 0x00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-POW_TARGET_TIMESPAN = 16 * 60  # bitcoin is 14 * 24 * 60 * 60
-POW_TARGET_TIMESPACE = 2 * 64  # bitcoin is 10 * 60
+POW_TARGET_TIMESPAN = 120  # bitcoin is 14 * 24 * 60 * 60
+POW_TARGET_TIMESPACE = 120  # bitcoin is 10 * 60
 RECOMMEND_CONFIRMATIONS = 10
 
 mainnet_block_explorers = {
-    'vipstarcoin.info': ('https://vipstarcoin.info',
+    'explorer.vipstarcoin.jp': ('http://explorer.vipstarcoin.jp',
                   {'tx': 'tx', 'addr': 'address', 'contract': 'contract'}),
-    'explorer.vipstarcoin.org': ('https://explorer.vipstarcoin.org',
+    'insight.vipstarco.in': ('https://insight.vipstarco.in/',
                           {'tx': 'tx', 'addr': 'address', 'contract': 'contract'}),
-    'vipstarcoinexplorer.io': ('https://vipstarcoinexplorer.io/',
-                        {'tx': 'tx', 'addr': 'address', 'contract': 'contract'}),
 }
 
 testnet_block_explorers = {
