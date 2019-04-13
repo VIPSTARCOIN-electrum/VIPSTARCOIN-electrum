@@ -153,7 +153,7 @@ class ElectrumWindow(App):
         self._trigger_update_history()
 
     def _get_bu(self):
-        return self.electrum_config.get('base_unit', 'mQTUM')
+        return self.electrum_config.get('base_unit', 'VIPS')
 
     def _set_bu(self, value):
         assert value in base_units.keys()

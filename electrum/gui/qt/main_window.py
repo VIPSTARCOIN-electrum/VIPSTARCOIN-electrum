@@ -1097,7 +1097,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.payto_e = PayToEdit(self)
         msg = _('Recipient of the funds.') + '\n\n' \
               + _(
-            'You may enter a QTUM address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a VIPSTARCOIN address)')
+            'You may enter a VIPS address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a VIPSTARCOIN address)')
         payto_label = HelpLabel(_('Pay to'), msg)
         grid.addWidget(payto_label, 1, 0)
         grid.addWidget(self.payto_e, 1, 1, 1, -1)
@@ -2707,9 +2707,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         SSL_id_e.setReadOnly(True)
         id_widgets.append((SSL_id_label, SSL_id_e))
 
-        units = ['QTUM', 'mQTUM', 'bits']
+        units = ['VIPS', 'mVIPS', 'uVIPS', 'boon']
         msg = _('Base unit of your wallet.')\
-              + '\n1QTUM=1000mQTUM.\n' \
+              + '\n1VIPS=1000mVIPS.\n' \
               + _(' These settings affects the fields in the Send tab')+' '
         unit_label = HelpLabel(_('Base unit') + ':', msg)
         unit_combo = QComboBox()
@@ -2722,12 +2722,14 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                 return
             edits = self.amount_e, self.fee_e, self.receive_amount_e
             amounts = [edit.get_amount() for edit in edits]
-            if unit_result == 'QTUM':
+            if unit_result == 'VIPS':
                 self.decimal_point = 8
-            elif unit_result == 'mQTUM':
+            elif unit_result == 'mVIPS':
                 self.decimal_point = 5
-            elif unit_result == 'bits':
+            elif unit_result == 'uVIPS':
                 self.decimal_point = 2
+            elif unit_result == 'boon':
+                self.decimal_point = 0
             else:
                 raise Exception('Unknown base unit')
             self.config.set_key('decimal_point', self.decimal_point, True)

@@ -639,7 +639,7 @@ class Commands:
             PR_PAID: 'Paid',
             PR_EXPIRED: 'Expired',
         }
-        out['amount (QTUM)'] = format_satoshis(out.get('amount'))
+        out['amount (VIPS)'] = format_satoshis(out.get('amount'))
         out['status'] = pr_str[out.get('status', PR_UNKNOWN)]
         return out
 
@@ -781,8 +781,8 @@ param_descriptions = {
     'pubkey': 'Public key',
     'message': 'Clear text message. Use quotes if it contains spaces.',
     'encrypted': 'Encrypted message',
-    'amount': 'Amount to be sent (in QTUM). Type \'!\' to send the maximum available.',
-    'requested_amount': 'Requested amount (in QTUM).',
+    'amount': 'Amount to be sent (in VIPS). Type \'!\' to send the maximum available.',
+    'requested_amount': 'Requested amount (in VIPS).',
     'outputs': 'list of ["address", amount]',
     'redeem_script': 'redeem script (hexadecimal)',
 }
