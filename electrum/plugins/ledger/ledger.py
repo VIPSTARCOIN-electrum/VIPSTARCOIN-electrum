@@ -452,7 +452,7 @@ class Ledger_KeyStore(Hardware_KeyStore):
             self.get_client().enableAlternate2fa(False)
             if segwitTransaction:
                 self.get_client().startUntrustedTransaction(True, inputIndex,
-                                                            chipInputs, redeemScripts[inputIndex])
+                                                            chipInputs, redeemScripts[inputIndex], version=tx.version)
                 # we don't set meaningful outputAddress, amount and fees
                 # as we only care about the alternateEncoding==True branch
                 outputData = self.get_client().finalizeInput(b'', 0, 0, changePath, bfh(rawTx))
@@ -468,7 +468,7 @@ class Ledger_KeyStore(Hardware_KeyStore):
                 while inputIndex < len(inputs):
                     singleInput = [chipInputs[inputIndex]]
                     self.get_client().startUntrustedTransaction(False, 0,
-                                                                singleInput, redeemScripts[inputIndex])
+                                                                singleInput, redeemScripts[inputIndex], version=tx.version)
                     inputSignature = self.get_client().untrustedHashSign(inputsPaths[inputIndex], pin,
                                                                          lockTime=tx.locktime)
                     inputSignature[0] = 0x30  # force for 1.4.9+
@@ -477,7 +477,7 @@ class Ledger_KeyStore(Hardware_KeyStore):
             else:
                 while inputIndex < len(inputs):
                     self.get_client().startUntrustedTransaction(firstTransaction, inputIndex,
-                                                            chipInputs, redeemScripts[inputIndex])
+                                                            chipInputs, redeemScripts[inputIndex], version=tx.version)
                     # we don't set meaningful outputAddress, amount and fees
                     # as we only care about the alternateEncoding==True branch
                     outputData = self.get_client().finalizeInput(b'', 0, 0, changePath, bfh(rawTx))
@@ -503,7 +503,7 @@ class Ledger_KeyStore(Hardware_KeyStore):
             self.handler.show_error(_('Cancelled by user'))
             return
         except BTChipException as e:
-            if e.sw == 0x6985:  # cancelled by user
+            if e.sw in (0x6985, 0x6d00):  # cancelled by user
                 return
             elif e.sw == 0x6982:
                 raise  # pin lock. decorator will catch it
@@ -561,7 +561,15 @@ class LedgerPlugin(HW_PluginBase):
         (0x2581, 0x3b7c),  # HW.1 ledger production
         (0x2581, 0x4b7c),  # HW.1 ledger test
         (0x2c97, 0x0000),  # Blue
-        (0x2c97, 0x0001)  # Nano-S
+        (0x2c97, 0x0001),  # Nano-S
+        (0x2c97, 0x0004),  # Nano-X
+        (0x2c97, 0x0005),  # RFU
+        (0x2c97, 0x0006),  # RFU
+        (0x2c97, 0x0007),  # RFU
+        (0x2c97, 0x0008),  # RFU
+        (0x2c97, 0x0009),  # RFU
+        (0x2c97, 0x000a)  # RFU
+
     ]
 
     SUPPORTED_XTYPES = ('standard', 'p2wpkh-p2sh', 'p2wpkh', 'p2wsh-p2sh', 'p2wsh')

@@ -10,7 +10,6 @@ dist/
 .eggs/
 contrib/pyinstaller/
 VIPSTARCOIN_Electrum.egg-info/
-electrum/gui/qt/icons_rc.py
 electrum/locale/*/LC_MESSAGES/
 .devlocaltmp/
 *_trial_temp

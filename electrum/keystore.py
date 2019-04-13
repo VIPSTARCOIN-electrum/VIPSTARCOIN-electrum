@@ -26,18 +26,19 @@
 
 from unicodedata import normalize
 import hashlib
+from typing import Tuple
 from . import bitcoin, ecc, constants, bip32
 from .vipstarcoin import (deserialize_privkey, serialize_privkey,
-                      public_key_to_p2pkh, seed_type, is_seed)
+                      public_key_to_p2pkh)
 from .bip32 import (bip32_public_derivation, deserialize_xpub, CKD_pub,
                     bip32_root, deserialize_xprv, bip32_private_derivation,
                     bip32_private_key, bip32_derivation, BIP32_PRIME,
                     is_xpub, is_xprv, CKD_priv)
 from .ecc import string_to_number, number_to_string
-from .crypto import pw_decode, pw_encode, sha256d, PW_HASH_VERSION_LATEST
+from .crypto import pw_decode, pw_encode, sha256, sha256d, PW_HASH_VERSION_LATEST
 from .util import (PrintError, InvalidPassword, hfu, WalletFileException,
                    VIPSTARCOINException, bh2u, bfh, print_error, inv_dict)
-from .mnemonic import Mnemonic, load_wordlist
+from .mnemonic import Mnemonic, load_wordlist, seed_type, is_seed
 
 
 class KeyStore(PrintError):
@@ -574,9 +575,6 @@ class Hardware_KeyStore(KeyStore, Xpub):
 
     type = 'hardware'
 
-    #restore_wallet_class = BIP32_RD_Wallet
-    max_change_outputs = 1
-
     def __init__(self, d):
         Xpub.__init__(self)
         KeyStore.__init__(self)
@@ -659,13 +657,14 @@ def bip39_to_seed(mnemonic, passphrase):
 
 
 # returns tuple (is_checksum_valid, is_wordlist_valid)
-def bip39_is_checksum_valid(mnemonic):
+def bip39_is_checksum_valid(mnemonic: str) -> Tuple[bool, bool]:
+    """Test checksum of bip39 mnemonic assuming English wordlist.
+    Returns tuple (is_checksum_valid, is_wordlist_valid)
+    """
     words = [ normalize('NFKD', word) for word in mnemonic.split() ]
     words_len = len(words)
     wordlist = load_wordlist("english.txt")
     n = len(wordlist)
-    checksum_length = 11*words_len//33
-    entropy_length = 32*checksum_length
     i = 0
     words.reverse()
     while words:
@@ -677,13 +676,12 @@ def bip39_is_checksum_valid(mnemonic):
         i = i*n + k
     if words_len not in [12, 15, 18, 21, 24]:
         return False, True
+    checksum_length = 11 * words_len // 33  # num bits
+    entropy_length = 32 * checksum_length  # num bits
     entropy = i >> checksum_length
     checksum = i % 2**checksum_length
-    h = '{:x}'.format(entropy)
-    while len(h) < entropy_length/4:
-        h = '0'+h
-    b = bytearray.fromhex(h)
-    hashed = int(hfu(hashlib.sha256(b).digest()), 16)
+    entropy_bytes = int.to_bytes(entropy, length=entropy_length//8, byteorder="big")
+    hashed = int.from_bytes(sha256(entropy_bytes), byteorder="big")
     calculated_checksum = hashed >> (256 - checksum_length)
     return checksum == calculated_checksum, True
 
@@ -809,8 +807,9 @@ def purpose48_derivation(account_id: int, xtype: str) -> str:
     return "m/%d'/%d'/%d'/%d'" % (bip43_purpose, coin, account_id, script_type_int)
 
 
-def bip44_derivation(account_id, bip43_purpose=44):
-    coin = constants.net.BIP44_COIN_TYPE
+def bip44_derivation(account_id, bip43_purpose=44, coin=None):
+    if coin is None:
+        coin = constants.net.BIP44_COIN_TYPE
     return "m/%d'/%d'/%d'" % (bip43_purpose, coin, int(account_id))
 
 

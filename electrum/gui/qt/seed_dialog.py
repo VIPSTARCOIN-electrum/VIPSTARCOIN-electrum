@@ -23,7 +23,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from electrum.i18n import _
-from electrum.mnemonic import Mnemonic
+from electrum.mnemonic import Mnemonic, seed_type
 
 from .util import *
 from .qrtextedit import ShowQRTextEdit, ScanQRTextEdit
@@ -107,7 +107,7 @@ class SeedLayout(QVBoxLayout):
         hbox = QHBoxLayout()
         if icon:
             logo = QLabel()
-            logo.setPixmap(QPixmap(":icons/seed.png").scaledToWidth(64))
+            logo.setPixmap(QPixmap(icon_path("seed.png")).scaledToWidth(64, mode=Qt.SmoothTransformation))
             logo.setMaximumWidth(60)
             hbox.addWidget(logo)
         hbox.addWidget(self.seed_e)
@@ -150,7 +150,6 @@ class SeedLayout(QVBoxLayout):
         return ' '.join(text.split())
 
     def on_edit(self):
-        from electrum.bitcoin import seed_type
         s = self.get_seed()
         b = self.is_seed(s)
         if not self.is_bip39:
@@ -173,13 +172,16 @@ class SeedLayout(QVBoxLayout):
 
 
 class KeysLayout(QVBoxLayout):
-    def __init__(self, parent=None, title=None, is_valid=None):
+    def __init__(self, parent=None, header_layout=None, is_valid=None, allow_multi=False):
         QVBoxLayout.__init__(self)
         self.parent = parent
         self.is_valid = is_valid
-        self.text_e = ScanQRTextEdit()
+        self.text_e = ScanQRTextEdit(allow_multi=allow_multi)
         self.text_e.textChanged.connect(self.on_edit)
-        self.addWidget(WWLabel(title))
+        if isinstance(header_layout, str):
+            self.addWidget(WWLabel(header_layout))
+        else:
+            self.addLayout(header_layout)
         self.addWidget(self.text_e)
 
     def get_text(self):

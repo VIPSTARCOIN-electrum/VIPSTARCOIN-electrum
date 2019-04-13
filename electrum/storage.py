@@ -35,7 +35,7 @@ import zlib
 from collections import defaultdict
 
 from .util import PrintError, profiler, InvalidPassword, \
-    export_meta, import_meta, print_error, bfh, WalletFileException
+    export_meta, import_meta, print_error, bfh, WalletFileException, standardize_path
 from .plugin import run_hook, plugin_loaders
 from .keystore import bip44_derivation
 from . import ecc
@@ -75,7 +75,8 @@ class JsonDB(PrintError):
     def __init__(self, path):
         self.db_lock = threading.RLock()
         self.data = {}
-        self.path = os.path.normcase(os.path.abspath(path))
+        self.path = standardize_path(path)
+        self._file_exists = self.path and os.path.exists(self.path)
         self.modified = False
 
     def get(self, key, default=None):
@@ -86,6 +87,11 @@ class JsonDB(PrintError):
             else:
                 v = copy.deepcopy(v)
         return v
+
+    def load_plugins(self):
+        wallet_type = self.data.get('wallet_type')
+        if wallet_type in plugin_loaders:
+            plugin_loaders[wallet_type]()
 
     def put(self, key, value):
         try:
@@ -102,6 +108,20 @@ class JsonDB(PrintError):
             elif key in self.data:
                 self.modified = True
                 self.data.pop(key)
+
+    def get_all_data(self) -> dict:
+        with self.db_lock:
+            return copy.deepcopy(self.data)
+
+    def overwrite_all_data(self, data: dict) -> None:
+        try:
+            json.dumps(data, cls=util.MyEncoder)
+        except:
+            self.print_error(f"json error: cannot save {repr(data)}")
+            return
+        with self.db_lock:
+            self.modified = True
+            self.data = copy.deepcopy(data)
 
     @profiler
     def write(self):
@@ -123,7 +143,9 @@ class JsonDB(PrintError):
             f.flush()
             os.fsync(f.fileno())
 
-        mode = os.stat(self.path).st_mode if os.path.exists(self.path) else stat.S_IREAD | stat.S_IWRITE
+        mode = os.stat(self.path).st_mode if self.file_exists() else stat.S_IREAD | stat.S_IWRITE
+        if not self.file_exists():
+            assert not os.path.exists(self.path)
         # perform atomic write on POSIX systems
         try:
             os.rename(temp_path, self.path)
@@ -131,6 +153,7 @@ class JsonDB(PrintError):
             os.remove(self.path)
             os.rename(temp_path, self.path)
         os.chmod(self.path, mode)
+        self._file_exists = True
         self.print_error("saved", self.path)
         self.modified = False
 
@@ -138,14 +161,14 @@ class JsonDB(PrintError):
         return plaintext
 
     def file_exists(self):
-        return self.path and os.path.exists(self.path)
+        return self._file_exists
 
 
 class WalletStorage(JsonDB):
 
     def __init__(self, path):
         JsonDB.__init__(self, path)
-        self.print_error("wallet path", path)
+        self.print_error("wallet path", self.path)
         self.pubkey = None
         if self.file_exists():
             with open(self.path, "r", encoding='utf-8') as f:
@@ -190,7 +213,10 @@ class WalletStorage(JsonDB):
             if encryption is disabled completely (self.is_encrypted() == False),
             or if encryption is enabled but the contents have already been decrypted.
         """
-        return bool(self.data)
+        try:
+            return bool(self.data)
+        except AttributeError:
+            return False
 
     def is_encrypted(self):
         """Return if storage encryption is currently enabled."""
@@ -338,6 +364,8 @@ class WalletStorage(JsonDB):
         return result
 
     def requires_upgrade(self):
+        if not self.is_past_initial_decryption():
+            raise Exception("storage not yet decrypted!")
         return self.file_exists() and self.get_seed_version() < FINAL_SEED_VERSION
 
     @profiler

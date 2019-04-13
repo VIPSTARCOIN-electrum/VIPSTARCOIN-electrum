@@ -310,7 +310,7 @@ class Network(util.DaemonThread):
                     del self.blockchains[k]
         return result
 
-    def set_status(self, status):
+    def _set_status(self, status):
         self.connection_status = status
         self.notify('status')
 
@@ -398,17 +398,14 @@ class Network(util.DaemonThread):
 
     @with_recent_servers_lock
     def get_servers(self):
-        out = constants.net.DEFAULT_SERVERS
-        if self.irc_servers:
-            out.update(filter_version(self.irc_servers.copy()))
-        else:
-            for s in self.recent_servers:
-                try:
-                    host, port, protocol = deserialize_server(s)
-                except:
-                    continue
-                if host not in out:
-                    out[host] = { protocol:port }
+        out = dict(constants.net.DEFAULT_SERVERS)  # copy
+        for s in self.recent_servers:
+            try:
+                host, port, protocol = deserialize_server(s)
+            except:
+                continue
+            if host not in out:
+                out[host] = {protocol: port}
         return out
 
     @with_interface_lock
@@ -416,7 +413,7 @@ class Network(util.DaemonThread):
         if (not server in self.interfaces and not server in self.connecting):
             if server == self.default_server:
                 self.print_error("connecting to %s as new interface" % server)
-                self.set_status('connecting')
+                self._set_status('connecting')
             self.connecting.add(server)
             c = Connection(server, self.socket_queue, self.config.path)
 
@@ -590,7 +587,7 @@ class Network(util.DaemonThread):
 
             self.interface = i
             self.send_subscriptions()
-            self.set_status('connected')
+            self._set_status('connected')
             self.trigger_callback('network_updated')
             if blockchain_updated: self.trigger_callback('blockchain_updated')
 
@@ -778,7 +775,7 @@ class Network(util.DaemonThread):
         We distinguish by whether it is in self.interfaces.'''
         self.disconnected_servers.add(server)
         if server == self.default_server:
-            self.set_status('disconnected')
+            self._set_status('disconnected')
         if server in self.interfaces:
             self.close_interface(self.interfaces[server])
             self.trigger_callback('network_updated')
@@ -889,7 +886,6 @@ class Network(util.DaemonThread):
             interface.mode = 'default'
             interface.print_error('catch up done', blockchain.height())
             blockchain.catch_up = None
-        self.trigger_callback('network_updated')
 
     def on_get_header(self, interface, response):
         '''Handle receiving a single block header'''
@@ -986,8 +982,6 @@ class Network(util.DaemonThread):
                             next_height = bh + 1
                             interface.blockchain.catch_up = interface.server
 
-                self.trigger_callback('network_updated')
-
         elif interface.mode == 'catch_up':
             can_connect = interface.blockchain.can_connect(header)
             if can_connect:
@@ -1023,9 +1017,6 @@ class Network(util.DaemonThread):
         if next_height is None:
             interface.mode = 'default'
             interface.request = None
-
-        # refresh network dialog
-        self.trigger_callback('network_updated')
 
     def maintain_requests(self):
         with self.interface_lock:

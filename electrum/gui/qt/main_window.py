@@ -149,11 +149,11 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.tokens_tab = self.create_tokens_tab()
         self.smart_contract_tab = self.create_smart_contract_tab()
 
-        tabs.addTab(self.create_history_tab(), QIcon(":icons/tab_history.png"), _('History'))
-        tabs.addTab(self.send_tab, QIcon(":icons/tab_send.png"), _('Send'))
-        tabs.addTab(self.receive_tab, QIcon(":icons/tab_receive.png"), _('Receive'))
-        tabs.addTab(self.tokens_tab, QIcon(":icons/tab_contacts.png"), _('Tokens'))
-        # tabs.addTab(self.contacts_tab, QIcon(":icons/tab_contacts.png"), _('Contacts'))
+        tabs.addTab(self.create_history_tab(), read_QIcon("tab_history.png"), _('History'))
+        tabs.addTab(self.send_tab, read_QIcon("tab_send.png"), _('Send'))
+        tabs.addTab(self.receive_tab, read_QIcon("tab_receive.png"), _('Receive'))
+        tabs.addTab(self.tokens_tab, read_QIcon("tab_contacts.png"), _('Tokens'))
+        # tabs.addTab(self.contacts_tab, read_QIcon("tab_contacts.png"), _('Contacts'))
 
         def add_optional_tab(tabs, tab, icon, description, name):
             tab.tab_icon = icon
@@ -163,11 +163,11 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             if self.config.get('show_{}_tab'.format(name), False):
                 tabs.addTab(tab, icon, description.replace("&", ""))
 
-        add_optional_tab(tabs, self.addresses_tab, QIcon(":icons/tab_addresses.png"), _("&Addresses"), "addresses")
-        add_optional_tab(tabs, self.utxo_tab, QIcon(":icons/tab_coins.png"), _("Co&ins"), "utxo")
-        add_optional_tab(tabs, self.console_tab, QIcon(":icons/tab_console.png"), _("Con&sole"), "console")
-        add_optional_tab(tabs, self.contacts_tab, QIcon(":icons/tab_contracts.png"), _("Con&tacts"), "contacts")
-        add_optional_tab(tabs, self.smart_contract_tab, QIcon(":icons/tab_console.png"), _('Smart Contract'),
+        add_optional_tab(tabs, self.addresses_tab, read_QIcon("tab_addresses.png"), _("&Addresses"), "addresses")
+        add_optional_tab(tabs, self.utxo_tab, read_QIcon("tab_coins.png"), _("Co&ins"), "utxo")
+        add_optional_tab(tabs, self.console_tab, read_QIcon("tab_console.png"), _("Con&sole"), "console")
+        add_optional_tab(tabs, self.contacts_tab, read_QIcon("tab_contracts.png"), _("Con&tacts"), "contacts")
+        add_optional_tab(tabs, self.smart_contract_tab, read_QIcon("tab_console.png"), _('Smart Contract'),
                          'contract')
 
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -176,7 +176,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         if self.config.get("is_maximized"):
             self.showMaximized()
 
-        self.setWindowIcon(QIcon(":icons/electrum.png"))
+        self.setWindowIcon(read_QIcon("electrum.png"))
         self.init_menubar()
 
         wrtabs = weakref.proxy(tabs)
@@ -410,7 +410,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.setGeometry(100, 100, 780, 400)
 
     def watching_only_changed(self):
-        title = 'Electrum for VIPSTARCOIN <Beta> %s  -  %s' % (self.wallet.electrum_version,
+        title = 'Electrum for VIPSTARCOIN %s  -  %s' % (self.wallet.electrum_version,
                                                         self.wallet.basename())
         extra = [self.wallet.storage.get('wallet_type', '?')]
         if self.wallet.is_watching_only():
@@ -759,7 +759,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         if self.network is None or not self.network.is_running():
             text = _("Offline")
-            icon = QIcon(":icons/status_disconnected.png")
+            icon = read_QIcon("status_disconnected.png")
 
         elif self.network.is_connected():
             server_height = self.network.get_server_height()
@@ -769,10 +769,10 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             # Display the synchronizing message in that case.
             if not self.wallet.up_to_date or server_height == 0:
                 text = _("Synchronizing...")
-                icon = QIcon(":icons/status_waiting.png")
+                icon = read_QIcon("status_waiting.png")
             elif server_lag > 1:
                 text = _("Server is lagging (%d blocks)"%server_lag)
-                icon = QIcon(":icons/status_lagging.png")
+                icon = read_QIcon("status_lagging.png")
             else:
                 c, u, x = self.wallet.get_balance()
                 text = _("Balance") + ": %s " % (self.format_amount_and_units(c))
@@ -786,12 +786,12 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                     text += self.fx.get_fiat_status_text(c + u + x,
                                                          self.base_unit(), self.get_decimal_point()) or ''
                 if not self.network.proxy:
-                    icon = QIcon(":icons/status_connected.png")
+                    icon = read_QIcon("status_connected.png")
                 else:
-                    icon = QIcon(":icons/status_connected_proxy.png")
+                    icon = read_QIcon("status_connected_proxy.png")
         else:
             text = _("Not connected")
-            icon = QIcon(":icons/status_disconnected.png")
+            icon = read_QIcon("status_disconnected.png")
 
         self.tray.setToolTip("%s (%s)" % (text, self.wallet.basename()))
         self.balance_label.setText(text)
@@ -932,16 +932,18 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         req = self.wallet.receive_requests[addr]
         message = self.wallet.labels.get(addr, '')
         amount = req['amount']
-        URI = util.create_URI(addr, amount, message)
+        extra_query_params = {}
         if req.get('time'):
-            URI += "&time=%d"%req.get('time')
+            extra_query_params['time'] = str(int(req.get('time')))
         if req.get('exp'):
-            URI += "&exp=%d"%req.get('exp')
+            extra_query_params['exp'] = str(int(req.get('exp')))
         if req.get('name') and req.get('sig'):
             sig = bfh(req.get('sig'))
             sig = bitcoin.base_encode(sig, base=58)
-            URI += "&name=" + req['name'] + "&sig="+sig
-        return str(URI)
+            extra_query_params['name'] = req['name']
+            extra_query_params['sig'] = sig
+        uri = util.create_bip21_uri(addr, amount, message, extra_query_params=extra_query_params)
+        return str(uri)
 
     def sign_payment_request(self, addr):
         alias = self.config.get('alias')
@@ -1076,7 +1078,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         amount = self.receive_amount_e.get_amount()
         message = self.receive_message_e.text()
         self.save_request_button.setEnabled((amount is not None) or (message != ""))
-        uri = util.create_URI(addr, amount, message)
+        uri = util.create_bip21_uri(addr, amount, message)
         self.receive_qr.setData(uri)
         if self.qr_window and self.qr_window.isVisible():
             self.qr_window.set_content(addr, amount, message, uri)
@@ -1846,16 +1848,16 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.password_button = StatusBarButton(self.lock_icon, _("Password"), self.change_password_dialog )
         sb.addPermanentWidget(self.password_button)
 
-        sb.addPermanentWidget(StatusBarButton(QIcon(":icons/preferences.png"), _("Preferences"), self.settings_dialog ) )
-        self.seed_button = StatusBarButton(QIcon(":icons/seed.png"), _("Seed"), self.show_seed_dialog )
+        sb.addPermanentWidget(StatusBarButton(read_QIcon("preferences.png"), _("Preferences"), self.settings_dialog ) )
+        self.seed_button = StatusBarButton(read_QIcon("seed.png"), _("Seed"), self.show_seed_dialog )
         sb.addPermanentWidget(self.seed_button)
-        self.status_button = StatusBarButton(QIcon(":icons/status_disconnected.png"), _("Network"), lambda: self.gui_object.show_network_dialog(self))
+        self.status_button = StatusBarButton(read_QIcon("status_disconnected.png"), _("Network"), lambda: self.gui_object.show_network_dialog(self))
         sb.addPermanentWidget(self.status_button)
         run_hook('create_status_bar', sb)
         self.setStatusBar(sb)
 
     def update_lock_icon(self):
-        icon = QIcon(":icons/lock.png") if self.wallet.has_password() else QIcon(":icons/unlock.png")
+        icon = read_QIcon("lock.png") if self.wallet.has_password() else read_QIcon("unlock.png")
         self.password_button.setIcon(icon)
 
     def update_buttons_on_seed(self):
@@ -2092,6 +2094,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout = QGridLayout(d)
 
         message_e = QTextEdit()
+        message_e.setAcceptRichText(False)
         layout.addWidget(QLabel(_('Message')), 1, 0)
         layout.addWidget(message_e, 1, 1)
         layout.setRowStretch(2,3)
@@ -2102,6 +2105,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout.addWidget(address_e, 2, 1)
 
         signature_e = QTextEdit()
+        signature_e.setAcceptRichText(False)
         layout.addWidget(QLabel(_('Signature')), 3, 0)
         layout.addWidget(signature_e, 3, 1)
         layout.setRowStretch(3,1)
@@ -2150,6 +2154,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout = QGridLayout(d)
 
         message_e = QTextEdit()
+        message_e.setAcceptRichText(False)
         layout.addWidget(QLabel(_('Message')), 1, 0)
         layout.addWidget(message_e, 1, 1)
         layout.setRowStretch(2,3)
@@ -2162,6 +2167,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout.addWidget(pubkey_e, 2, 1)
 
         encrypted_e = QTextEdit()
+        encrypted_e.setAcceptRichText(False)
         layout.addWidget(QLabel(_('Encrypted')), 3, 0)
         layout.addWidget(encrypted_e, 3, 1)
         layout.setRowStretch(3,1)
@@ -3141,7 +3147,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             msg = (_("Transaction added to wallet history.") + '\n\n' +
                    _("Note: this is an offline transaction, if you want the network "
                      "to see it, you need to broadcast it."))
-            win.msg_box(QPixmap(":icons/offline_tx.png"), None, _('Success'), msg)
+            win.msg_box(QPixmap(icon_path("offline_tx.png")), None, _('Success'), msg)
             return True
 
     def create_tokens_tab(self):
@@ -3179,18 +3185,19 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         d = TokenSendDialog(self, token)
         d.show()
 
-    def do_token_pay(self, token, pay_to, amount, gas_limit, gas_price, dialog):
+    def do_token_pay(self, token, pay_to, amount, gas_limit, gas_price, dialog, preview=False):
         try:
             datahex = 'a9059cbb{}{:064x}'.format(pay_to.zfill(64), amount)
             script = contract_script(gas_limit, gas_price, datahex, token.contract_addr, opcodes.OP_CALL)
             outputs = [TxOutput(TYPE_SCRIPT, script, 0), ]
             tx_desc = _('pay out {} {}').format(amount / (10 ** token.decimals), token.symbol)
-            self._smart_contract_broadcast(outputs, tx_desc, gas_limit * gas_price, token.bind_addr, dialog)
+            self._smart_contract_broadcast(outputs, tx_desc, gas_limit * gas_price,
+                                           token.bind_addr, dialog, None, preview)
         except (BaseException,) as e:
             traceback.print_exc(file=sys.stderr)
             dialog.show_message(str(e))
 
-    def _smart_contract_broadcast(self, outputs, desc, gas_fee, sender, dialog, broadcast_done=None):
+    def _smart_contract_broadcast(self, outputs, desc, gas_fee, sender, dialog, broadcast_done=None, preview=False):
         coins = self.get_coins()
         try:
             tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, None,
@@ -3203,6 +3210,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         except BaseException as e:
             traceback.print_exc(file=sys.stdout)
             dialog.show_message(str(e))
+            return
+        if preview:
+            self.show_transaction(tx, desc)
             return
 
         amount = sum(map(lambda y: y[2], outputs))
@@ -3276,7 +3286,10 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             return
         types = list([x['type'] for x in abi.get('outputs', [])])
         try:
-            result = eth_abi.decode_abi(types, binascii.a2b_hex(result))
+            if isinstance(result, dict):
+                output = eth_abi.decode_abi(types, binascii.a2b_hex(result['executionResult']['output']))
+            else:
+                output = eth_abi.decode_abi(types, binascii.a2b_hex(result))
 
             def decode_x(x):
                 if isinstance(x, bytes):
@@ -3286,29 +3299,28 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                         return str(x)
                 return str(x)
 
-            result = ','.join([decode_x(x) for x in result])
+            output = ','.join([decode_x(x) for x in output])
+            dialog.show_message(output)
         except (BaseException,) as e:
             import traceback, sys
             traceback.print_exc(file=sys.stderr)
             print(e)
-        if not result:
-            dialog.show_message('')
-            return
-        dialog.show_message(result)
+            dialog.show_message(e, result)
 
-    def sendto_smart_contract(self, address, abi, args, gas_limit, gas_price, amount, sender, dialog):
+
+    def sendto_smart_contract(self, address, abi, args, gas_limit, gas_price, amount, sender, dialog, preview):
         try:
             abi_encoded = eth_abi_encode(abi, args)
             script = contract_script(gas_limit, gas_price, abi_encoded, address, opcodes.OP_CALL)
             outputs = [TxOutput(TYPE_SCRIPT, script, amount), ]
             tx_desc = 'contract sendto {}'.format(self.smart_contracts[address][0])
-            self._smart_contract_broadcast(outputs, tx_desc, gas_limit * gas_price, sender, dialog)
+            self._smart_contract_broadcast(outputs, tx_desc, gas_limit * gas_price, sender, dialog, None, preview)
         except (BaseException,) as e:
             import traceback, sys
             traceback.print_exc(file=sys.stderr)
             dialog.show_message(str(e))
 
-    def create_smart_contract(self, name, bytecode, abi, constructor, args, gas_limit, gas_price, sender, dialog):
+    def create_smart_contract(self, name, bytecode, abi, constructor, args, gas_limit, gas_price, sender, dialog, preview):
 
         def broadcast_done(tx):
             if is_opcreate_script(bfh(tx.outputs()[0].address)):
@@ -3323,7 +3335,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             script = contract_script(gas_limit, gas_price, bytecode + abi_encoded, None, opcodes.OP_CREATE)
             outputs = [TxOutput(TYPE_SCRIPT, script, 0), ]
             self._smart_contract_broadcast(outputs, 'create contract {}'.format(name), gas_limit * gas_price,
-                                           sender, dialog, broadcast_done)
+                                           sender, dialog, broadcast_done, preview)
         except (BaseException,) as e:
             import traceback, sys
             traceback.print_exc(file=sys.stderr)

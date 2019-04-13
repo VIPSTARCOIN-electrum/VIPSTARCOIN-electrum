@@ -32,7 +32,8 @@ import re
 from decimal import Decimal
 from electrum import bitcoin
 from electrum.util import bfh
-from electrum.transaction import TxOutput
+from electrum.transaction import push_script, TxOutput
+from electrum.vipstarcoin import opcodes
 
 from . import util
 
@@ -91,13 +92,10 @@ class PayToEdit(CompletionTextEdit, ScanQRTextEdit):
             return bitcoin.TYPE_SCRIPT, script
 
     def parse_script(self, x):
-        from electrum.transaction import opcodes, push_script
         script = ''
         for word in x.split():
             if word[0:3] == 'OP_':
-                assert word in opcodes.lookup
-                # script += chr(opcodes.lookup[word])
-                opcode_int = opcodes.lookup[word]
+                opcode_int = opcodes[word]
                 assert opcode_int < 256  # opcode is single-byte
                 script += bitcoin.int_to_hex(opcode_int)
             else:

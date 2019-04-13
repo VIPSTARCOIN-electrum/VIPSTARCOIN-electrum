@@ -35,7 +35,7 @@ import hmac
 from struct import Struct
 import webbrowser
 import stat
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 import inspect
 from locale import localeconv
 
@@ -47,7 +47,7 @@ from aiohttp_socks import SocksConnector, SocksVer
 def inv_dict(d):
     return {v: k for k, v in d.items()}
 
-base_units = {'QTUM':8, 'mQTUM':5, 'uQTUM':2}
+base_units = {'VIPS':8, 'mVIPS':5, 'uVIPS':2, 'boon':0}
 fee_levels = [_('Within 25 blocks'), _('Within 10 blocks'), _('Within 5 blocks'), _('Within 2 blocks'), _('In the next block')]
 
 unpack_int32_from = Struct('<i').unpack_from
@@ -363,6 +363,20 @@ def assert_file_in_datadir_available(path, config_path):
             'Should be at {}'.format(path))
 
 
+def standardize_path(path):
+    return os.path.normcase(os.path.realpath(os.path.abspath(path)))
+
+
+def get_new_wallet_name(wallet_folder: str) -> str:
+    i = 1
+    while True:
+        filename = "wallet_%d" % i
+        if filename in os.listdir(wallet_folder):
+            i += 1
+        else:
+            break
+    return filename
+
 def assert_bytes(*args):
     """
     porting helper, assert args type
@@ -407,7 +421,6 @@ def to_bytes(something, encoding='utf8') -> bytes:
 
 
 bfh = bytes.fromhex
-hfu = binascii.hexlify
 
 
 def bh2u(x: bytes) -> str:
@@ -419,7 +432,7 @@ def bh2u(x: bytes) -> str:
     :param x: bytes
     :rtype: str
     """
-    return hfu(x).decode('ascii')
+    return x.hex()
 
 
 def user_dir():
@@ -434,6 +447,14 @@ def user_dir():
     else:
         #raise Exception("No home directory found in environment variables.")
         return
+
+
+# absolute path to python package folder of electrum ("lib")
+pkg_dir = os.path.split(os.path.realpath(__file__))[0]
+
+
+def resource_path(*parts):
+    return os.path.join(pkg_dir, *parts)
 
 
 def format_satoshis_plain(x, decimal_point = 8):
@@ -670,17 +691,25 @@ def parse_URI(uri, on_pr=None):
     return out
 
 
-def create_URI(addr, amount, message):
-    from . import bitcoin
-    if not bitcoin.is_address(addr):
+def create_bip21_uri(addr, amount_sat: Optional[int], message: Optional[str],
+                     *, extra_query_params: Optional[dict] = None) -> str:
+    from . import qtum
+    if not qtum.is_address(addr):
         return ""
+    if extra_query_params is None:
+        extra_query_params = {}
     query = []
-    if amount:
-        query.append('amount=%s'%format_satoshis_plain(amount))
+    if amount_sat:
+        query.append('amount=%s' % format_satoshis_plain(amount_sat))
     if message:
-        query.append('message=%s'%urllib.parse.quote(message))
+        query.append('message=%s' % urllib.parse.quote(message))
+    for k, v in extra_query_params.items():
+        if not isinstance(k, str) or k != urllib.parse.quote(k):
+            raise Exception(f"illegal key for URI: {repr(k)}")
+        v = urllib.parse.quote(v)
+        query.append(f"{k}={v}")
     p = urllib.parse.ParseResult(scheme='vipstarcoin', netloc='', path=addr, params='', query='&'.join(query), fragment='')
-    return urllib.parse.urlunparse(p)
+    return str(urllib.parse.urlunparse(p))
 
 
 # Python bug (http://bugs.python.org/issue1927) causes raw_input
@@ -889,7 +918,7 @@ def make_aiohttp_session(proxy):
             password=proxy.get('password', None),
             rdns=True
         )
-        return aiohttp.ClientSession(headers={'User-Agent' : 'VIPSTARCOIN Electrum'}, timeout=aiohttp.ClientTimeout(total=10), connector=connector)
+        return aiohttp.ClientSession(headers={'User-Agent' : 'Electrum for VIPSTARCOIN'}, timeout=aiohttp.ClientTimeout(total=10), connector=connector)
     else:
-        return aiohttp.ClientSession(headers={'User-Agent' : 'VIPSTARCOIN Electrum'}, timeout=aiohttp.ClientTimeout(total=10))
+        return aiohttp.ClientSession(headers={'User-Agent' : 'Electrum for VIPSTARCOIN'}, timeout=aiohttp.ClientTimeout(total=10))
 

@@ -1,17 +1,16 @@
 #!/bin/bash
 
 # You probably need to update only this link
-ELECTRUM_GIT_URL=https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum.git
+ELECTRUM_GIT_URL=https://github.com/VIPSTARCOIN-electrum/electrum-vips.git
 BRANCH=master
 NAME_ROOT=VIPSTARCOIN-electrum
-PYTHON_VERSION=3.6.6
 
 # These settings probably don't need any change
 export WINEPREFIX=/opt/wine64
 export PYTHONHASHSEED=22
 export PYTHONDONTWRITEBYTECODE=1
 
-PYHOME=c:/python$PYTHON_VERSION
+PYHOME=c:/python3
 PYTHON="wine $PYHOME/python.exe -OO -B"
 
 # Let's begin!
@@ -54,10 +53,8 @@ cp -r ../../../electrum/locale $WINEPREFIX/drive_c/electrum/electrum/
 # Install frozen dependencies
 $PYTHON -m pip install -r ../../../requirements.txt
 
-# Build Qt resources
-wine $WINEPREFIX/drive_c/python$PYTHON_VERSION/Scripts/pyrcc5.exe C:/electrum/icons.qrc -o C:/electrum/electrum/gui/qt/icons_rc.py
-
 pushd $WINEPREFIX/drive_c/electrum
+
 $PYTHON setup.py install
 popd
 
@@ -66,7 +63,7 @@ cd ..
 rm -rf dist/
 
 # build standalone version and portable versions
-wine "C:/python$PYTHON_VERSION/scripts/pyinstaller.exe" --noconfirm --ascii --clean --name $NAME_ROOT-win-$VERSION -w deterministic.spec
+wine "$PYHOME/scripts/pyinstaller.exe" --noconfirm --ascii --clean --name $NAME_ROOT-win-$VERSION -w deterministic.spec
 
 # set timestamps in dist, in order to make the installer reproducible
 pushd dist

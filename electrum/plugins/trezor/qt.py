@@ -1,9 +1,9 @@
 from functools import partial
 import threading
 
-from PyQt5.Qt import Qt
-from PyQt5.Qt import QGridLayout, QInputDialog, QPushButton
-from PyQt5.Qt import QVBoxLayout, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QGridLayout, QInputDialog, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QLabel
 
 from electrum.gui.qt.util import *
 from electrum.i18n import _
@@ -259,8 +259,8 @@ class QtPlugin(QtPluginBase):
 
 
 class Plugin(TrezorPlugin, QtPlugin):
-    icon_unpaired = ":icons/trezor_unpaired.png"
-    icon_paired = ":icons/trezor.png"
+    icon_unpaired = "trezor_unpaired.png"
+    icon_paired = "trezor.png"
 
     @classmethod
     def pin_matrix_widget_class(self):

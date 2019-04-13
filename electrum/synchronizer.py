@@ -171,8 +171,6 @@ class Synchronizer(ThreadJob):
                          (tx_hash, tx_height, len(tx.raw)))
         # callbacks
         self.network.trigger_callback('new_transaction', self.wallet, tx)
-        if not self.requested_tx:
-            self.network.trigger_callback('wallet_updated', self.wallet)
 
     def request_missing_txs(self, hist):
         # "hist" is a list of [tx_hash, tx_height] lists
@@ -403,12 +401,9 @@ class Synchronizer(ThreadJob):
         with self.lock:
             addresses = self.new_addresses
             self.new_addresses = set()
-        self.subscribe_to_addresses(addresses)
-
-        # subscribe to new tokens
-        with self.lock:
             tokens = self.new_tokens
             self.new_tokens = set()
+        self.subscribe_to_addresses(addresses)
         self.subscribe_tokens(tokens)
 
         # 3. Detect if situation has changed

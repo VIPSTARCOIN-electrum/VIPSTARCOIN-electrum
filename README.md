@@ -9,7 +9,7 @@ VIPSTARCOIN Electrum
 Getting started
 ===============
 
-For Windows and Mac OS X users, you can download latest release [here](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/releases).
+For Windows and Mac OS X users, you can download latest release [here](https://github.com/VIPSTARCOIN-electrum/electrum-vips/releases).
 
 
 If you are using Linux, read the "Development Version" section.
@@ -38,8 +38,8 @@ Development version
 
 Check out the code from Github:
 
-    git clone https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum.git
-    cd electrum
+    git clone https://github.com/VIPSTARCOIN-electrum/electrum-vips.git
+    cd electrum-vips
 
 Install dependencies::
 
@@ -50,11 +50,6 @@ Install dependencies::
     pip3 install -r requirements.txt
     pip3 install -r requirements-binaries.txt
     pip3 install -r requirements-fixed.txt
-
-Compile the icons file for Qt:
-
-    sudo apt-get install pyqt5-dev-tools
-    pyrcc5 icons.qrc -o electrum/gui/qt/icons_rc.py
 
 Compile the protobuf description file:
 
@@ -95,12 +90,13 @@ See [contrib/build-osx/README.md](https://github.com/VIPSTARCOIN-electrum/VIPSTA
 Windows
 -------
 
-See [contrib/build-wine/README.md](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/contrib/build-wine/README.md) file.
+See [contrib/build-wine/README.md](https://github.com/VIPSTARCOIN-electrum/electrum-vips/blob/master/contrib/build-wine/README.md) file.
 
 
-Android
--------
+Linux
+-----
 
-See [gui/kivy/Readme.md](https://github.com/VIPSTARCOIN-electrum/VIPSTARCOIN-electrum/blob/master/gui/kivy/Readme.md) file.
+See [contrib/build-linux/README.md](https://github.com/VIPSTARCOIN-electrum/electrum-vips/blob/master/contrib/build-linux/README.md) file.
 
+See [gui/kivy/Readme.md](https://github.com/VIPSTARCOIN-electrum/electrum-vips/blob/master/gui/kivy/Readme.md) file.
 

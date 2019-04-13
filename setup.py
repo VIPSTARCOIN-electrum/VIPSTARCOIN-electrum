@@ -8,20 +8,23 @@ import importlib.util
 import os
 import platform
 import sys
-from setuptools import setup
+
+MIN_PYTHON_VERSION = "3.6.1"
+_min_python_version_tuple = tuple(map(int, (MIN_PYTHON_VERSION.split("."))))
+
+if sys.version_info[:3] < _min_python_version_tuple:
+    sys.exit("Error: Electrum requires Python version >= %s..." % MIN_PYTHON_VERSION)
 
 with open('./requirements.txt') as f:
     requirements = f.read().splitlines()
 
 requirements += ['eth-hash', 'eth-utils', 'eth-abi']
 
+
 # load version.py; needlessly complicated alternative to "imp.load_source":
 version_spec = importlib.util.spec_from_file_location('version', 'electrum/version.py')
 version_module = version = importlib.util.module_from_spec(version_spec)
 version_spec.loader.exec_module(version_module)
-
-if sys.version_info[:3] < (3, 4, 0):
-    sys.exit("Error: Electrum requires Python version >= 3.4.0...")
 
 data_files = []
 
@@ -40,12 +43,13 @@ if platform.system() in ['Linux', 'FreeBSD', 'DragonFly']:
             usr_share = os.path.expanduser('~/.local/share')
     data_files += [
         (os.path.join(usr_share, 'applications/'), ['electrum.desktop']),
-        (os.path.join(usr_share, icons_dirname), ['icons/electrum.png'])
+        (os.path.join(usr_share, icons_dirname), ['electrum/gui/icons/electrum.png'])
     ]
 
 setup(
     name="VIPSTARCOIN Electrum",
     version=version.ELECTRUM_VERSION,
+    python_requires='>={}'.format(MIN_PYTHON_VERSION),
     install_requires=requirements,
     extras_require={
         'full': ['Cython>=0.27', 'rlp==0.6.0', 'trezor[hidapi]>=0.9.0',
@@ -70,7 +74,10 @@ setup(
         'electrum': [
             'wordlist/*.txt',
             'locale/*/LC_MESSAGES/electrum.mo',
-        ]
+        ],
+        'electrum.gui': [
+            'icons/*',
+        ],
     },
     scripts=['run_electrum'],
     data_files=data_files,

@@ -909,6 +909,11 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
+#: electrum/gui/qt/history_list.py:276
+msgid "Copy raw transaction"
+msgstr ""
+
+
 #: electrum/base_wizard.py:164
 msgid "Cosign with hardware device"
 msgstr ""
@@ -4064,7 +4069,7 @@ msgid "You can set the homescreen on your device to personalize it.  You must ch
 msgstr ""
 
 #: electrum/gui/qt/main_window.py:1073
-msgid "You may enter a QTUM address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a VIPSTARCOIN address)"
+msgid "You may enter a VIPS address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a VIPSTARCOIN address)"
 msgstr ""
 
 #: electrum/base_wizard.py:376

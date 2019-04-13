@@ -33,8 +33,7 @@ from .jsonrpc import VerifyingJSONRPCServer
 
 from .version import ELECTRUM_VERSION
 from .network import Network
-from .util import json_decode, DaemonThread
-from .util import print_error, to_string
+from .util import json_decode, DaemonThread, print_error, to_string, standardize_path
 from .wallet import Wallet
 from .storage import WalletStorage
 from .commands import known_commands, Commands
@@ -182,6 +181,7 @@ class Daemon(DaemonThread):
             response = wallet is not None
         elif sub == 'close_wallet':
             path = config.get_wallet_path()
+            path = standardize_path(path)
             if path in self.wallets:
                 self.stop_wallet(path)
                 response = True
@@ -229,6 +229,7 @@ class Daemon(DaemonThread):
         return response
 
     def load_wallet(self, path, password):
+        path = standardize_path(path)
         # wizard will be launched if we return
         if path in self.wallets:
             wallet = self.wallets[path]
@@ -248,18 +249,21 @@ class Daemon(DaemonThread):
         if storage.get_action():
             return
         wallet = Wallet(storage)
-        wallet.start_threads(self.network)
+        wallet.start_network(self.network)
         self.wallets[path] = wallet
         return wallet
 
     def add_wallet(self, wallet):
         path = wallet.storage.path
+        path = standardize_path(path)
         self.wallets[path] = wallet
 
     def get_wallet(self, path):
+        path = standardize_path(path)
         return self.wallets.get(path)
 
     def stop_wallet(self, path):
+        path = standardize_path(path)
         wallet = self.wallets.pop(path)
         if not wallet: return
         wallet.stop_threads()
@@ -273,6 +277,7 @@ class Daemon(DaemonThread):
         cmd = known_commands[cmdname]
         if cmd.requires_wallet:
             path = config.get_wallet_path()
+            path = standardize_path(path)
             wallet = self.wallets.get(path)
             if wallet is None:
                 return {
@@ -291,7 +296,10 @@ class Daemon(DaemonThread):
 
         cmd_runner = Commands(config, wallet, self.network)
         func = getattr(cmd_runner, cmd.name)
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except TypeError as e:
+            raise Exception("Wrapping TypeError to prevent JSONRPC-Pelix from hiding traceback") from e
         return result
 
     def run(self):
