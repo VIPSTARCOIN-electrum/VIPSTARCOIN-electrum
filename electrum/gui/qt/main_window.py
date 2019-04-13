@@ -707,13 +707,15 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         return self.decimal_point
 
     def base_unit(self):
-        assert self.decimal_point in [2, 5, 8]
+        assert self.decimal_point in [0, 2, 5, 8]
+        if self.decimal_point == 0:
+            return 'boon'
         if self.decimal_point == 2:
-            return 'bits'
+            return 'uVIPS'
         if self.decimal_point == 5:
-            return 'mQTUM'
+            return 'mVIPS'
         if self.decimal_point == 8:
-            return 'QTUM'
+            return 'VIPS'
         raise Exception('Unknown base unit')
 
     def connect_fields(self, window, btc_e, fiat_e, fee_e):

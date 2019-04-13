@@ -36,7 +36,7 @@ from .bip32 import (bip32_public_derivation, deserialize_xpub, CKD_pub,
                     is_xpub, is_xprv, CKD_priv)
 from .ecc import string_to_number, number_to_string
 from .crypto import pw_decode, pw_encode, sha256, sha256d, PW_HASH_VERSION_LATEST
-from .util import (PrintError, InvalidPassword, hfu, WalletFileException,
+from .util import (PrintError, InvalidPassword, WalletFileException,
                    VIPSTARCOINException, bh2u, bfh, print_error, inv_dict)
 from .mnemonic import Mnemonic, load_wordlist, seed_type, is_seed
 

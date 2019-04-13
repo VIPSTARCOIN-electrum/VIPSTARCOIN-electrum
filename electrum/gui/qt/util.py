@@ -11,7 +11,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from electrum.i18n import _, languages
-from electrum.util import FileImportFailed, FileExportFailed
+from electrum.util import FileImportFailed, FileExportFailed, resource_path
 from electrum.paymentrequest import PR_UNPAID, PR_PAID, PR_UNKNOWN, PR_EXPIRED
 
 if platform.system() == 'Windows':

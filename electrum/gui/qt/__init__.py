@@ -44,7 +44,7 @@ import PyQt5.QtCore as QtCore
 from electrum.i18n import _, set_language
 from electrum.plugin import run_hook
 from electrum.base_wizard import GoBack
-from qtum_electrum.wallet import Wallet, Abstract_Wallet
+from electrum.wallet import Wallet, Abstract_Wallet
 from electrum.util import (UserCancelled, print_error, WalletFileException, VIPSTARCOINException, get_new_wallet_name)
 from .installwizard import InstallWizard, WalletAlreadyOpenInMemory
 

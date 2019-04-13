@@ -693,8 +693,8 @@ def parse_URI(uri, on_pr=None):
 
 def create_bip21_uri(addr, amount_sat: Optional[int], message: Optional[str],
                      *, extra_query_params: Optional[dict] = None) -> str:
-    from . import qtum
-    if not qtum.is_address(addr):
+    from . import vipstarcoin
+    if not vipstarcoin.is_address(addr):
         return ""
     if extra_query_params is None:
         extra_query_params = {}
