@@ -429,23 +429,95 @@ class Blockchain(util.PrintError):
         if not pprev_header:
             raise Exception('get header failed {}'.format(height - 2))
 
-        #  Limit adjustment step
-        nActualSpace = prev_header.get('timestamp') - pprev_header.get('timestamp')
-        nActualSpace = max(0, nActualSpace)
-        nActualSpace = min(nActualSpace, POW_TARGET_TIMESPACE * 10)
-        #  Retarget
-        nInterval = POW_TARGET_TIMESPAN // POW_TARGET_TIMESPACE
-        new_target = uint256_from_compact(prev_header.get('bits'))
-        new_target *= ((nInterval - 1) * POW_TARGET_TIMESPACE + nActualSpace + nActualSpace)
-        new_target //= ((nInterval + 1) * POW_TARGET_TIMESPACE)
 
-        if new_target <= 0 or new_target > POS_LIMIT:
-            new_target = POS_LIMIT
+        # TODO:Pythonﾁｮｯﾄﾃﾞｷﾙ人に修正してもらう
 
-        nbits = compact_from_uint256(new_target)
-        new_target = uint256_from_compact(nbits)
+        # eHRC (enhanced Hash Rate Compensation)
+        # Short, medium and long samples averaged together and compared against the target time span.
+        # Adjust every block but limted to 9% change maximum.
+        # Difficulty is calculated separately for PoW and PoS blocks in that PoW skips PoS blocks and vice versa.
 
-        return nbits, new_target
+        stake_flag = chain.get('hash_prevout_stake')
+        if stake_flag is None:
+            MAX_TARGET = POW_LIMIT
+        else:
+            MAX_TARGET = POS_LIMIT
+
+        # params
+        nTargetTimespan = 120
+        DiffAdjustChange = 1000
+        DiffDamping = 1000
+        shortSample = 15
+        mediumSample = 200
+        longSample = 1000
+        ShortTime = 0
+        MediumTime = 0
+        nActualTimespan = 0
+        nActualTimespanShort = 0
+        nActualTimespanMedium = 0
+        nActualTimespanLong = 0
+        OnelongSample = longSample + 1
+
+        for i in range(OnelongSample):
+            if pprev_header is None:
+                return MAX_TARGET
+
+        if height <= DiffAdjustChange:
+            for i in range(longSample):
+                if i == shortSample - 1:
+                    pindexFirstShortTime = pprev_header.get('timestamp')
+
+                if i == mediumSample - 1:
+                    pindexFirstMediumTime = pprev_header.get('timestamp')
+
+            else:
+                for i in range(longSample, 0):
+
+                    if i == shortSample - 1:
+                        pindexFirstShortTime = pprev_header.get('timestamp')
+
+                    if i == mediumSample - 1:
+                        pindexFirstMediumTime = pprev_header.get('timestamp')
+
+                    i += 1
+
+            lastblocktime = prev_header.get('timestamp')
+            firstblocktime = pprev_header.get('timestamp')
+
+            if not lastblocktime - ShortTime == 0:
+                nActualTimespanShort = (lastblocktime - ShortTime) // shortSample
+
+            if not lastblocktime - MediumTime == 0:
+                nActualTimespanMedium = (lastblocktime - MediumTime) // mediumSample
+
+            if not lastblocktime - firstblocktime == 0:
+                nActualTimespanLong = lastblocktime - firstblocktime // longSample
+
+            nActualTimespanSum = nActualTimespanShort + nActualTimespanMedium + nActualTimespanLong
+
+            if not nActualTimespanSum == 0:
+                nActualTimespan = nActualTimespanSum // 3
+
+            if last >= DiffDamping:
+                # Apply .25 damping
+                nActualTimespan = nActualTimespan + (3 * nTargetTimespan)
+                nActualTimespan //= 4
+
+            # 9% difficulty limiter
+            nActualTimespanMax = nTargetTimespan * 494 // 453
+            nActualTimespanMin = nTargetTimespan * 453 // 494
+
+            nActualTimespan = max(nActualTimespan, nActualTimespanMin)
+            nActualTimespan = min(nActualTimespan, nActualTimespanMax)
+
+            bnNew = self.bits_to_target(prev_header.get('bits'))
+            bnNew *= nActualTimespan
+            bnNew //= nTargetTimespan
+
+            bnNew = min(bnNew, MAX_TARGET)
+            bnNew = max(bnNew, 0)
+
+            return bnNew
 
     def can_connect(self, header, check_height=True):
         if not header:
