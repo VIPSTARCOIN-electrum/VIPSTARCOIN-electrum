@@ -811,15 +811,6 @@ def compact_from_uint256(target):
     new_bits = bitsN << 24 | bitsBase
     return new_bits
 
-
-def vipstarcoin_addr_to_bitcoin_addr(vipstarcoin_addr):
-    addr_type, hash160 = b58_address_to_hash160(vipstarcoin_addr)
-    if addr_type == constants.net.ADDRTYPE_P2PKH:
-        return hash160_to_b58_address(hash160, addrtype=constants.net.BITCOIN_ADDRTYPE_P2PKH)
-    elif addr_type == constants.net.ADDRTYPE_P2SH:
-        return hash160_to_b58_address(hash160, addrtype=constants.net.BITCOIN_ADDRTYPE_P2SH)
-
-
 def eth_abi_encode(abi, args):
     """
     >> abi = {"constant":True,"inputs":[{"name":"","type":"address"}],

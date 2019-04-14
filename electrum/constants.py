@@ -41,21 +41,16 @@ class VIPSTARCOINMainnet:
 
     TESTNET = False
     WIF_PREFIX = 0x80
-    BITCOIN_ADDRTYPE_P2PKH = 0
-    BITCOIN_ADDRTYPE_P2SH = 5
-    ADDRTYPE_P2PKH = 0x3a
-    ADDRTYPE_P2SH = 0x32
-    SEGWIT_HRP = "qc"
-    GENESIS = "000075aef83cf2853580f8ae8ce6f8c3096cfa21d98334d6e3f95e5582ed986c"
+    ADDRTYPE_P2PKH = 70
+    ADDRTYPE_P2SH = 50
+    SEGWIT_HRP = "vips"
+    GENESIS = "0000d068e1d30f79fb64446137106be9c6ee69a6a722295c131506b1ee09b77c"
     GENESIS_BITS = 0x1f00ffff
     DEFAULT_PORTS = {'t': '50001', 's': '50002'}
     DEFAULT_SERVERS = read_json('servers.json', {})
     CHECKPOINTS = read_json('checkpoints.json', {})
 
-    # for the 88 and 2301 coin type issue, see https://github.com/satoshilabs/slips/pull/196
-    # Qtum official uses 88 as coin type
-    BIP44_COIN_TYPE = 88
-    SLIP_COIN_TYPE = 2301
+    BIP44_COIN_TYPE = 1919
 
     XPRV_HEADERS = {
         'standard': 0x0488ade4,
@@ -77,18 +72,15 @@ class VIPSTARCOINTestnet:
 
     TESTNET = True
     WIF_PREFIX = 0xef
-    BITCOIN_ADDRTYPE_P2PKH = 111
-    BITCOIN_ADDRTYPE_P2SH = 196
-    ADDRTYPE_P2PKH = 120
+    ADDRTYPE_P2PKH = 132
     ADDRTYPE_P2SH = 110
-    SEGWIT_HRP = "tq"
-    GENESIS = "0000e803ee215c0684ca0d2f9220594d3f828617972aad66feb2ba51f5e14222"
+    SEGWIT_HRP = "tvips"
+    GENESIS = "0000d068e1d30f79fb64446137106be9c6ee69a6a722295c131506b1ee09b77c"
     GENESIS_BITS = 0x1f00ffff
     DEFAULT_PORTS = {'t': '51001', 's': '51002'}
     DEFAULT_SERVERS = read_json('servers_testnet.json', {})
     CHECKPOINTS = read_json('checkpoints_testnet.json', {})
     BIP44_COIN_TYPE = 1
-    SLIP_COIN_TYPE = 1
 
     XPRV_HEADERS = {
         'standard': 0x04358394,
@@ -108,8 +100,8 @@ class VIPSTARCOINTestnet:
 
 class VIPSTARCOINRegtest(VIPSTARCOINTestnet):
 
-    SEGWIT_HRP = "qcrt"
-    GENESIS = "0x665ed5b402ac0b44efc37d8926332994363e8a7278b7ee9a58fb972efadae943"
+    SEGWIT_HRP = "tvips"
+    GENESIS = "0000d068e1d30f79fb64446137106be9c6ee69a6a722295c131506b1ee09b77c"
     DEFAULT_SERVERS = read_json('servers_regtest.json', {})
     CHECKPOINTS = {}
 

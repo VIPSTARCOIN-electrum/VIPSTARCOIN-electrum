@@ -397,11 +397,11 @@ class BaseWizard(object):
             if self.plugin is not None and self.plugin.name == "trezor":
                 choices += [
                     ('standard',    'legacy (p2pkh) (trezor web wallet compatiable)',
-                     bip44_derivation(0, bip43_purpose=44, coin=constants.net.SLIP_COIN_TYPE)),
+                     bip44_derivation(0, bip43_purpose=44, coin=constants.net.BIP44_COIN_TYPE)),
                     ('p2wpkh-p2sh', 'p2sh-segwit (p2wpkh-p2sh) (trezor web wallet compatiable)',
-                     bip44_derivation(0, bip43_purpose=49, coin=constants.net.SLIP_COIN_TYPE)),
+                     bip44_derivation(0, bip43_purpose=49, coin=constants.net.BIP44_COIN_TYPE)),
                     ('p2wpkh',      'native segwit (p2wpkh) (trezor web wallet compatiable)',
-                     bip44_derivation(0, bip43_purpose=84, coin=constants.net.SLIP_COIN_TYPE)),
+                     bip44_derivation(0, bip43_purpose=84, coin=constants.net.BIP44_COIN_TYPE)),
                 ]
 
         while True:

@@ -3,7 +3,7 @@ import traceback
 import sys
 
 from electrum.util import bfh, bh2u, versiontuple, UserCancelled, UserFacingException
-from electrum.vipstarcoin import (TYPE_ADDRESS, TYPE_SCRIPT, vipstarcoin_addr_to_bitcoin_addr)
+from electrum.vipstarcoin import TYPE_ADDRESS, TYPE_SCRIPT
 from electrum.bip32 import deserialize_xpub, convert_bip32_path_to_list_of_uint32 as parse_path
 from electrum import constants
 from electrum.i18n import _
@@ -159,7 +159,7 @@ class TrezorPlugin(HW_PluginBase):
         return client
 
     def get_coin_name(self):
-        return "Testnet" if constants.net.TESTNET else "Bitcoin"
+        return "Testnet" if constants.net.TESTNET else "VIPSTARCOIN"
 
     def initialize_device(self, device_id, wizard, handler):
         # Initialization method
@@ -418,8 +418,7 @@ class TrezorPlugin(HW_PluginBase):
                 txoutputtype.op_return_data = trezor_validate_op_return_output_and_get_data(o)
             elif _type == TYPE_ADDRESS:
                 txoutputtype.script_type = OutputScriptType.PAYTOADDRESS
-                # vipstarcoin diff
-                txoutputtype.address = vipstarcoin_addr_to_bitcoin_addr(address)
+                txoutputtype.address = address
             return txoutputtype
 
         outputs = []
